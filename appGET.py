@@ -6,6 +6,9 @@ import json
 app: Flask = Flask(__name__)
 api = Api()
 
+@app.route("/")
+def page_index():
+    return "страничка для теста API"
 
 def extrainLoginData():
     parser = reqparse.RequestParser()

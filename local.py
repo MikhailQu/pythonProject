@@ -10,11 +10,11 @@ data = {
     "contact": "79100767686"
 }
 data = json.dumps(data)
-'''
-res = requests.get("http://127.0.0.1:5000/app/get/me")
+
+res = requests.get("https://jolly-phoenix-915d16.netlify.app/get/me")
 time.sleep(0.5)
 print(res.json())
-
+'''
 
 res = requests.get("http://127.0.0.1:5000/app/get/qr", headers=headers, data=data)
 time.sleep(0.5)
@@ -24,7 +24,7 @@ res = requests.get("http://127.0.0.1:5000/app/get/status", headers=headers, data
 time.sleep(0.5)
 print(res.json())
 
-'''
+
 
 
 
@@ -32,7 +32,6 @@ res = requests.get("http://127.0.0.1:5000/app/get/logout", headers=headers, data
 time.sleep(0.5)
 print(res.json())
 
-'''
 res = requests.post(url, headers=headers, json=data)
 time.sleep(0.5)
 print(res.json())
