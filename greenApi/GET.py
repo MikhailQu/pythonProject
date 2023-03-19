@@ -1,14 +1,11 @@
 from whatsapp_api_client_python import API
 import json
 
-loginData = dict(id_instanse="1101799607", apiTokenInstanse="056a7216d44740f696c3fd46a73711e6b695827c1cde46ce99",
-                 contact="79100767686")
-loginData['contact'] = (loginData['contact'] + '@c.us')
-greenAPI = API.GreenApi(loginData["id_instanse"], loginData["apiTokenInstanse"])
+
 
 
 def status(loginData):
-    res =greenAPI.account.getStateInstance()
+    res =API.GreenApi(loginData["idInstance"], loginData["apiTokenInstance"]).account.getStateInstance()
     if res.data['stateInstance'] == "authorized":
         res.data['message'] = "Аккаунт авторизован"
         print(res.data)
@@ -42,9 +39,9 @@ def status(loginData):
 
 
 def qr_code64(loginData):
-    if greenAPI.account.getStateInstance().data[
+    if API.GreenApi(loginData["idInstance"], loginData["apiTokenInstance"]).account.getStateInstance().data[
         'stateInstance'] == "notAuthorized":
-        qr_code64 = API.GreenApi(loginData["id_instanse"], loginData["apiTokenInstanse"]).account.qr()
+        qr_code64 = API.GreenApi(loginData["id_instance"], loginData["apiTokenInstance"]).account.qr()
         # print("qr:", qr_code64.data)
         return (qr_code64.data)
     else:
@@ -54,7 +51,7 @@ def qr_code64(loginData):
 
 
 def logout(loginData):
-    res = greenAPI.account.logout()
+    res = API.GreenApi(loginData["idInstance"], loginData["apiTokenInstance"]).account.logout()
     res.data['message'] = "выход из аккаунта"
     print(res.data)
     return (res.data)
@@ -64,10 +61,9 @@ def me(loginData):
     chatId = (str(loginData['contact']) + '@c.us')
     print(chatId)
 
-    if greenAPI.account.getStateInstance().data['stateInstance'] == "authorized":
+    if API.GreenApi(loginData["idInstance"], loginData["apiTokenInstance"]).account.getStateInstance().data['stateInstance'] == "authorized":
+        res = API.GreenApi(loginData["idInstance"], loginData["apiTokenInstance"]).serviceMethods.getContactInfo(chatId=(str(loginData["contact"]) + '@c.us'))
         print("ok")
-        res = API.GreenApi(loginData["id_instanse"], loginData["apiTokenInstanse"]).serviceMethods.getContactInfo(
-            chatId=chatId)
         res.data['message'] = "инфо о профиле"
         print(res.data)
         return res.data

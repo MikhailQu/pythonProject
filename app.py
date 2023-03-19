@@ -1,25 +1,36 @@
 from flask import Flask, jsonify
 from flask_restful import Api, Resource, reqparse
-from greenApi import GET
+from greenApi import GET, POST
 import json
 
 app: Flask = Flask(__name__)
 api = Api()
 
+
 @app.route("/")
 def page_index():
     return "страничка для теста API"
 
-def extrainLoginData():
+
+def extrainData():
     parser = reqparse.RequestParser()
-    parser.add_argument("apiTokenInstanse", type=str)
-    parser.add_argument("id_instanse", type=int)
+    parser.add_argument("apiTokenInstance", type=str)
+    parser.add_argument("idInstance", type=str)
     parser.add_argument("contact", type=int)
-    argum = parser.parse_args()
-    id_instanse = argum['id_instanse']
-    apiTokenInstanse = argum["apiTokenInstanse"]
-    contact = argum["contact"]
-    login = {"id_instanse": str(id_instanse), "apiTokenInstanse": apiTokenInstanse, "contact": contact}
+    parser.add_argument("recipient", type=int)
+    parser.add_argument("message", type=str)
+    arg = parser.parse_args()
+    id_instance = arg['idInstance']
+    apiTokenInstance = arg["apiTokenInstance"]
+    contact = arg["contact"]
+    recipient = arg["recipient"]
+    message = arg["message"]
+    login = {"idInstance": str(id_instance),
+             "apiTokenInstance": apiTokenInstance,
+             "contact": contact,
+             "recipient": recipient,
+             "message": message
+             }
     return login
 
 
@@ -27,49 +38,52 @@ class Account(Resource):
 
     def get(self, request):
         if request == "ok":
-            return jsonify("request:ok___")
-
+            return jsonify({"Account": "request:ok___"})
 
         if request == "status":
 
-            status = GET.status(extrainLoginData())
+            status = GET.status(extrainData())
             if status['message'] == "Аккаунт не авторизован":
-                qr = GET.qr_code64(extrainLoginData())
+                qr = GET.qr_code64(extrainData())
                 return jsonify("request:status___", status, qr)
             else:
                 return jsonify("request:status___", status['message'])
 
-
         if request == "me":
-            me = GET.me(extrainLoginData())
+            me = GET.me(extrainData())
             return jsonify("request:me___", me)
 
         if request == "qr":
-            qr = GET.qr_code64(extrainLoginData())
+            qr = GET.qr_code64(extrainData())
             return jsonify("request:qr___", qr)
 
+        if request == "logout":
+            if GET.status(extrainData())['message'] != "Аккаунт авторизован":
+                return jsonify("Аккаунт не авторизован или находится в сервисном режиме")
+            else:
+                logout = GET.logout(extrainData())
+                return jsonify("выхожу из аккаунта", logout)
 
-        if request == "logout" and GET.status(extrainLoginData())['message'] != "Аккаунт авторизован":
-            return jsonify("Аккаунт не авторизован или находится в сервисном режиме")
         else:
-            logout = GET.logout(extrainLoginData())
-            return jsonify("выхожу из аккаунта", logout)
+            return jsonify("Используйте /help для получения списка доступных запросов")
 
-api.add_resource(Account, '/app/account/<string:request>')
-api.init_app(app)
 
 class Messenger(Resource):
 
     def post(self, request):
-        return
+        if request == "ok":
+            return jsonify({"Messenger": "request:ok___"})
+        if request == "sendMessage" and extrainData()['recipient'] is not None and extrainData()["contact"] is not None:
+            Message = POST.sendMessage(extrainData())
+            a= str(extrainData()['message']), "send to ", str(extrainData()['recipient'])
+            return json.dumps({"message": a[0:5]})
+        else:
+            return json.dumps({"message": "sendMessage(recipient, message, auth) - неверный аргумент  "})
 
 
+api.add_resource(Account, "/app/account/<string:request>")
 api.add_resource(Messenger, '/app/messenger/<string:request>')
 api.init_app(app)
-
-
-
-
 
 if __name__ == "__main__":
     app.run(debug=True)
