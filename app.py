@@ -28,6 +28,7 @@ def extrainData():
     parser.add_argument("file", type=str)
     parser.add_argument("link", type=str)
     parser.add_argument("sendContact", type=str)
+    parser.add_argument("location", type=str)
     arg = parser.parse_args()
     id_instance = arg['idInstance']
     apiTokenInstance = arg["apiTokenInstance"]
@@ -36,6 +37,7 @@ def extrainData():
     message = arg["message"]
     file = arg["file"]
     link= arg["link"]
+    location = arg["location"]
     sendContact= arg["sendContact"]
     login = {"idInstance": str(id_instance),
              "apiTokenInstance": apiTokenInstance,
@@ -44,7 +46,8 @@ def extrainData():
              "message": message,
              "file": file,
              "link": link,
-             "sendContact": sendContact
+             "sendContact": sendContact,
+             "location": location
              }
     return login
 
@@ -53,7 +56,7 @@ class Account(Resource):
 
     def get(self, request):
         if request == "ok":
-            return jsonify({"Account": "request:ok___"})
+            return jsonify({"Account": "request:ok___"},extrainData())
 
         if request == "status":
 
@@ -121,6 +124,18 @@ class Messenger(Resource):
                 return json.dumps({"message": message[0:5]})
             else:
                 return json.dumps({"message": "что то не так"})
+
+        if request =="sendLocation":
+            if extrainData()['recipient'] is not None \
+                    and extrainData()["contact"] is not None:
+                #POST.sendLocation(extrainData())
+                message = "функция в разработке"
+                return json.dumps({"message": message})
+            else:
+                return json.dumps({"message": "что то не так"})
+
+
+            return
 
 
 

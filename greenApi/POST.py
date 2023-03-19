@@ -16,6 +16,10 @@ def sendContact(auth):
     API.GreenApi(auth["idInstance"], auth["apiTokenInstance"]).sending.sendContact(str(auth["recipient"]) + '@c.us',auth["sendContact"])
     return
 
+def sendLocation(auth):
+    API.GreenApi(auth["idInstance"], auth["apiTokenInstance"]).sending.sendLocation(chatId=str(auth["recipient"]) + '@c.us',nameLocation=str(auth["location"]["nameLocation"]))
+    return
+
 
 
 
