@@ -6,8 +6,16 @@ def sendMessage(auth):
     return
 
 def sendFile(auth):
-    API.GreenApi(auth["idInstance"], auth["apiTokenInstance"]).sending.sendFileByUpload()
     return
+
+def sendLink(auth):
+    API.GreenApi(auth["idInstance"], auth["apiTokenInstance"]).sending.sendMessage(str(auth["recipient"]) + '@c.us',auth["link"])
+    return
+
+def sendContact(auth):
+    API.GreenApi(auth["idInstance"], auth["apiTokenInstance"]).sending.sendContact(str(auth["recipient"]) + '@c.us',auth["sendContact"])
+    return
+
 
 
 

@@ -13,15 +13,21 @@ api = Api()
 def page_index():
     return "страничка для теста API"
 
+def invertId():
+    return # проверяет "contact" и "recipient" на формат и преобразует при необходимость
+def verificationFormat():
+    return# проверяет все аргументы. выдает ошибку по неверному аргументу
 
 def extrainData():
     parser = reqparse.RequestParser()
     parser.add_argument("apiTokenInstance", type=str)
     parser.add_argument("idInstance", type=str)
-    parser.add_argument("contact", type=int)
-    parser.add_argument("recipient", type=int)
+    parser.add_argument("contact", type=str)
+    parser.add_argument("recipient", type=str)
     parser.add_argument("message", type=str)
     parser.add_argument("file", type=str)
+    parser.add_argument("link", type=str)
+    parser.add_argument("sendContact", type=str)
     arg = parser.parse_args()
     id_instance = arg['idInstance']
     apiTokenInstance = arg["apiTokenInstance"]
@@ -29,12 +35,16 @@ def extrainData():
     recipient = arg["recipient"]
     message = arg["message"]
     file = arg["file"]
+    link= arg["link"]
+    sendContact= arg["sendContact"]
     login = {"idInstance": str(id_instance),
              "apiTokenInstance": apiTokenInstance,
              "contact": contact,
              "recipient": recipient,
              "message": message,
-             "file": file
+             "file": file,
+             "link": link,
+             "sendContact": sendContact
              }
     return login
 
@@ -83,14 +93,38 @@ class Messenger(Resource):
         if request == "sendMessage" :
             if extrainData()['recipient'] is not None \
             and extrainData()["contact"] is not None:
-                Message = POST.sendMessage(extrainData())
-                a= str(extrainData()['message']), "send to ", str(extrainData()['recipient'])
-                return json.dumps({"message": a[0:5]})
+                POST.sendMessage(extrainData())
+                message= str(extrainData()['message']), "send to ", str(extrainData()['recipient'])
+                return json.dumps({"message": message[0:5]})
             else:
                 return json.dumps({"message": "sendMessage(recipient, message, auth) - неверный аргумент  "})
 
+
         if request == "sendFile":
             return extrainData()['file']
+
+        if request == "sendLink":
+            if extrainData()['recipient'] is not None \
+                    and extrainData()["contact"] is not None \
+                    and extrainData()["link"] is not None:
+                POST.sendLink(extrainData())
+                message = str(extrainData()['link']), "send to ", str(extrainData()['recipient'])
+                return json.dumps({"message": message[0:5]})
+            else:
+                return json.dumps({"message": "что то не так"})
+
+        if request == "sendContact":
+            if extrainData()['recipient'] is not None \
+                    and extrainData()["contact"] is not None :
+                POST.sendContact(extrainData())
+                message = "contact send to ", str(extrainData()['recipient'])
+                return json.dumps({"message": message[0:5]})
+            else:
+                return json.dumps({"message": "что то не так"})
+
+
+
+
 
 
 api.add_resource(Account, "/app/account/<string:request>")
