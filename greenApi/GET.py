@@ -75,5 +75,3 @@ def me(loginData):
         reply = {"message": " данные не доступны. Войдите в учетную запись или свяжитесь с администратором"}
         print(reply)
         return json.dumps(reply)
-
-

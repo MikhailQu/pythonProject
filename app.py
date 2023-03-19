@@ -55,12 +55,21 @@ class Account(Resource):
             logout = GET.logout(extrainLoginData())
             return jsonify("выхожу из аккаунта", logout)
 
-
-
-
-
 api.add_resource(Account, '/app/account/<string:request>')
 api.init_app(app)
+
+class Messenger(Resource):
+
+    def post(self, request):
+        return
+
+
+api.add_resource(Messenger, '/app/messenger/<string:request>')
+api.init_app(app)
+
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
