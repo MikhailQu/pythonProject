@@ -2,8 +2,6 @@ from flask import Flask, jsonify
 from flask_restful import Api, Resource, reqparse
 from greenApi import GET, POST
 import json
-import os
-from pathlib import Path
 
 app: Flask = Flask(__name__)
 api = Api()
@@ -13,10 +11,14 @@ api = Api()
 def page_index():
     return "страничка для теста API"
 
+
 def invertId():
-    return # проверяет "contact" и "recipient" на формат и преобразует при необходимость
+    return  # проверяет "contact" и "recipient" на формат и преобразует при необходимость
+
+
 def verificationFormat():
-    return# проверяет все аргументы. выдает ошибку по неверному аргументу
+    return  # проверяет все аргументы. выдает ошибку по неверному аргументу
+
 
 def extrainData():
     parser = reqparse.RequestParser()
@@ -36,9 +38,9 @@ def extrainData():
     recipient = arg["recipient"]
     message = arg["message"]
     file = arg["file"]
-    link= arg["link"]
+    link = arg["link"]
     location = arg["location"]
-    sendContact= arg["sendContact"]
+    sendContact = arg["sendContact"]
     login = {"idInstance": str(id_instance),
              "apiTokenInstance": apiTokenInstance,
              "contact": contact,
@@ -56,7 +58,7 @@ class Account(Resource):
 
     def get(self, request):
         if request == "ok":
-            return jsonify({"Account": "request:ok___"},extrainData())
+            return jsonify({"Account": "request:ok___"}, extrainData())
 
         if request == "status":
 
@@ -92,16 +94,14 @@ class Messenger(Resource):
         if request == "ok":
             return jsonify({"Messenger": "request:ok___"})
 
-
-        if request == "sendMessage" :
+        if request == "sendMessage":
             if extrainData()['recipient'] is not None \
-            and extrainData()["contact"] is not None:
+                    and extrainData()["contact"] is not None:
                 POST.sendMessage(extrainData())
-                message= str(extrainData()['message']), "send to ", str(extrainData()['recipient'])
+                message = str(extrainData()['message']), "send to ", str(extrainData()['recipient'])
                 return json.dumps({"message": message[0:5]})
             else:
                 return json.dumps({"message": "sendMessage(recipient, message, auth) - неверный аргумент  "})
-
 
         if request == "sendFile":
             return extrainData()['file']
@@ -118,28 +118,23 @@ class Messenger(Resource):
 
         if request == "sendContact":
             if extrainData()['recipient'] is not None \
-                    and extrainData()["contact"] is not None :
+                    and extrainData()["contact"] is not None:
                 POST.sendContact(extrainData())
                 message = "contact send to ", str(extrainData()['recipient'])
                 return json.dumps({"message": message[0:5]})
             else:
                 return json.dumps({"message": "что то не так"})
 
-        if request =="sendLocation":
+        if request == "sendLocation":
             if extrainData()['recipient'] is not None \
                     and extrainData()["contact"] is not None:
-                #POST.sendLocation(extrainData())
+                # POST.sendLocation(extrainData())
                 message = "функция в разработке"
                 return json.dumps({"message": message})
             else:
                 return json.dumps({"message": "что то не так"})
 
-
-            return
-
-
-
-
+        return "ERROR POST"
 
 
 api.add_resource(Account, "/app/account/<string:request>")
