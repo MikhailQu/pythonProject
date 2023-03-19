@@ -5,6 +5,11 @@ def sendMessage(auth):
     API.GreenApi(auth["idInstance"], auth["apiTokenInstance"]).sending.sendMessage(str(auth["recipient"]) + '@c.us', auth["message"])
     return
 
+def sendFile(auth):
+    API.GreenApi(auth["idInstance"], auth["apiTokenInstance"]).sending.sendFileByUpload()
+    return
+
+
 
 '''
 #####6.1. Управление аккаунтомPOST /setName - Изменить имя пользователя. Пример запроса: {"user_name": "new_name"}. Пример ответа: {"status": "OK", "user_name": "new_name"}
