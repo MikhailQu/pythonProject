@@ -23,7 +23,7 @@ def extrainLoginData():
     return login
 
 
-class Main(Resource):
+class Account(Resource):
 
     def get(self, request):
         if request == "ok":
@@ -42,7 +42,7 @@ class Main(Resource):
 
         if request == "me":
             me = GET.me(extrainLoginData())
-            return jsonify("request:me___", me['message'], me)
+            return jsonify("request:me___", me)
 
         if request == "qr":
             qr = GET.qr_code64(extrainLoginData())
@@ -59,7 +59,7 @@ class Main(Resource):
 
 
 
-api.add_resource(Main, '/app/get/<string:request>')
+api.add_resource(Account, '/app/account/<string:request>')
 api.init_app(app)
 
 if __name__ == "__main__":

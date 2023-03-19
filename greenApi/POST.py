@@ -1,11 +1,11 @@
 from whatsapp_api_client_python import API
 auth = {"id_instanse":"1101799607","apiTokenInstanse":"056a7216d44740f696c3fd46a73711e6b695827c1cde46ce99", "contact": "79100767686" }
-chatId=(auth['contact']+'@c.us')
+#chatId=(auth['contact']+'@c.us'),
 greenAPI = API.GreenApi(auth["id_instanse"],auth["apiTokenInstanse"] )
 
 
-def sendMessage(contact, messege, auth): # contact: ф:'79207401234', messege - текст сообщения, auth - данные авторизации ф:{"id_instanse":"0000","apiTokenInstanse":"0000"}
-    API.GreenApi(auth["id_instanse"], auth["apiTokenInstanse"]).sending.sendMessage(contact+'@c.us', messege)
+def sendMessage(resipient, messege, auth): # contact: ф:'79207401234', messege - текст сообщения, auth - данные авторизации ф:{"id_instanse":"0000","apiTokenInstanse":"0000"}
+    API.GreenApi(auth["id_instanse"], auth["apiTokenInstanse"]).sending.sendMessage(resipient+'@c.us', messege)
     print("cooбщение отправлено")
 
 sendMessage('79100767686', '*ВАУ-ВАУ-ВАУУУУУ!!!!*', auth)

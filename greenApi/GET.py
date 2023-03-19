@@ -1,16 +1,16 @@
 from whatsapp_api_client_python import API
+import json
 
-loginData = {"id_instanse": "1101799607", "apiTokenInstanse": "056a7216d44740f696c3fd46a73711e6b695827c1cde46ce99",
-         "contact": "79100767686"}
+loginData = dict(id_instanse="1101799607", apiTokenInstanse="056a7216d44740f696c3fd46a73711e6b695827c1cde46ce99",
+                 contact="79100767686")
 loginData['contact'] = (loginData['contact'] + '@c.us')
 greenAPI = API.GreenApi(loginData["id_instanse"], loginData["apiTokenInstanse"])
 
 
 def status(loginData):
-    res = API.GreenApi(loginData["id_instanse"], loginData["apiTokenInstanse"]).account.getStateInstance()
+    res =greenAPI.account.getStateInstance()
     if res.data['stateInstance'] == "authorized":
         res.data['message'] = "Аккаунт авторизован"
-        res.data["qr"] = qr_code64()
         print(res.data)
         return (res.data)
 
@@ -31,7 +31,6 @@ def status(loginData):
 
     elif res.data['stateInstance'] == "notAuthorized":
         res.data['message'] = "Аккаунт не авторизован"
-        #res.data["qr"] = qr_code64()
         print(res.data)
         return (res.data)
 
@@ -43,37 +42,38 @@ def status(loginData):
 
 
 def qr_code64(loginData):
-    qr_code64 = greenAPI.account.qr()
-    print("qr:", qr_code64.data)
-    return ( qr_code64.data)
+    if greenAPI.account.getStateInstance().data[
+        'stateInstance'] == "notAuthorized":
+        qr_code64 = API.GreenApi(loginData["id_instanse"], loginData["apiTokenInstanse"]).account.qr()
+        # print("qr:", qr_code64.data)
+        return (qr_code64.data)
+    else:
+        reply = {"message": "to get a QR code, log out of your account or contact the administrator"}
+        print(reply)
+        return json.dumps(reply)
 
 
 def logout(loginData):
-    res = API.GreenApi(loginData["id_instanse"], loginData["apiTokenInstanse"]).account.logout()
+    res = greenAPI.account.logout()
     res.data['message'] = "выход из аккаунта"
     print(res.data)
     return (res.data)
 
 
 def me(loginData):
-    chatId = (str(loginData['contact'])+'@c.us')
-    print(chatId )
+    chatId = (str(loginData['contact']) + '@c.us')
+    print(chatId)
 
     if greenAPI.account.getStateInstance().data['stateInstance'] == "authorized":
-        res = greenAPI.serviceMethods.getContactInfo(chatId=chatId)
+        print("ok")
+        res = API.GreenApi(loginData["id_instanse"], loginData["apiTokenInstanse"]).serviceMethods.getContactInfo(
+            chatId=chatId)
         res.data['message'] = "инфо о профиле"
         print(res.data)
-        return (res.data)
-        '''
-        
-        return (chatId)
+        return res.data
     else:
-        print("ошибка авторизации")
-'''
+        reply = {"message": " данные не доступны. Войдите в учетную запись или свяжитесь с администратором"}
+        print(reply)
+        return json.dumps(reply)
 
-'''
-GET /status +
-#########GET /qr_code - Получить прямую ссылку на QR-код в виде изображения, а не base64. Пример ответа: {"qr_link": "https://api.aneem.ru/messenger{ID}/qr/{hash}"}
-GET /logout +
-GET /me +
-'''
+
